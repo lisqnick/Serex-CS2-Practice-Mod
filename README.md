@@ -107,12 +107,6 @@ all your favorite and most used commands to keys for faster use!
 - Use `!back` to quickly retry throws
 - `!damage` shows total damage dealt
 
-## 🐛 Known Issues:
-
-- Run boosting with bots may get the bot stuck underground
-- Run boost only works on teammate bots
-- Bot crouch/stand affects ALL bots globally
-
 ## 👁 Credits:
 **Author**: Serex
 
