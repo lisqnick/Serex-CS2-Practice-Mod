@@ -61,7 +61,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions.
 | `!map <name>` | Change map |
 | `!noflash` | Toggle flash immunity |
 | `!restart` | Restart the round |
-| `!damage` | `!stats` | Show grenade damage stats |
+| `!damage` & `!stats` | Show grenade damage stats |
 | `!clearstats` | Clear damage stats |
 
 ### Bot Commands
