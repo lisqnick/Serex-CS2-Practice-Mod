@@ -44,8 +44,9 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions.
 | Command | Description |
 |---------|---------|
 | `!practice` & `!prac` | Toggle practice mode |
-| `!help` & `!phelp` | Show command list |
-| `!back` & `!rethrow` | Return to last throw position |
+| `!help` | Show command list |
+| `!back` | Return to last throw position |
+| `!rethrow` | Rethrow last grenade |
 | `!rec` | Record your nade lineup |
 | `!loadnade <#>` |Load saved position |
 | `!listnades` | List all saved positions |
