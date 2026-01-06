@@ -306,7 +306,8 @@ public class PracticeMode : BasePlugin
 
         player.PrintToChat($" {ChatColors.Green}═══════ PRACTICE MODE COMMANDS ═══════");
         player.PrintToChat($" {ChatColors.Yellow}!practice{ChatColors.Default} - Toggle practice mode");
-        player.PrintToChat($" {ChatColors.Yellow}!rethrow{ChatColors.Default} / {ChatColors.Yellow}!back{ChatColors.Default} - Return to last nade position");
+        player.PrintToChat($" {ChatColors.Yellow}!back{ChatColors.Default} - Return to last nade position");
+		player.PrintToChat($" {ChatColors.Yellow}!rethrow{ChatColors.Default} - Rethrow last thrown grenade");
         player.PrintToChat($" {ChatColors.Yellow}!rec{ChatColors.Default} / {ChatColors.Yellow}!record{ChatColors.Default} - Start recording nade lineup");
         player.PrintToChat($" {ChatColors.Yellow}!loadnade <#>{ChatColors.Default} - Load saved position");
         player.PrintToChat($" {ChatColors.Yellow}!listnades{ChatColors.Default} - List all saved positions");
@@ -317,7 +318,7 @@ public class PracticeMode : BasePlugin
         player.PrintToChat($" {ChatColors.Yellow}!clear{ChatColors.Default} - Clear all grenades/smokes");
         player.PrintToChat($" {ChatColors.Yellow}!impacts{ChatColors.Default} - Toggle bullet impacts");
         player.PrintToChat($" {ChatColors.Yellow}!go <x, y, z>{ChatColors.Default} - Teleport to coordinates");
-        player.PrintToChat($" {ChatColors.Yellow}!tspawnF [#]{ChatColors.Default} / {ChatColors.Yellow}!ctspawn [#]{ChatColors.Default} - Cycle or jump to spawn");
+        player.PrintToChat($" {ChatColors.Yellow}!tspawn [#]{ChatColors.Default} / {ChatColors.Yellow}!ctspawn [#]{ChatColors.Default} - Cycle or jump to spawn");
 		player.PrintToChat($" {ChatColors.Yellow}!restart{ChatColors.Default} - Restart round");
         player.PrintToChat($" {ChatColors.Yellow}!map <mapname>{ChatColors.Default} - Change map");
         player.PrintToChat($" {ChatColors.Yellow}!noflash{ChatColors.Default} - Toggle flash immunity");
