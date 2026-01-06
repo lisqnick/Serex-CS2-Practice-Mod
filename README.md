@@ -41,11 +41,11 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions.
 ## 💬 Command List:
 
 ### Practice Commands
-| Command | Aliases | Description |
-|---------|---------|-------------|
-| `!practice` | `!prac` | Toggle practice mode |
-| `!help` | `!phelp` | Show command list |
-| `!back` | `!rethrow` | Return to last throw position |
+| Command | Description |
+|---------|---------|
+| `!practice` & `!prac` | Toggle practice mode |
+| `!help` & `!phelp` | Show command list |
+| `!back` & `!rethrow` | Return to last throw position |
 | `!rec` | Record your nade lineup |
 | `!loadnade <#>` |Load saved position |
 | `!listnades` | List all saved positions |
@@ -65,8 +65,8 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions.
 | `!clearstats` | Clear damage stats |
 
 ### Bot Commands
-| Command | Aliases | Description |
-|---------|---------|-------------|
+| Command | Description |
+|---------|---------|
 | `!bot` | Add a bot (auto-balances teams) |
 | `!ctbot` | Add a CT bot |
 | `!tbot` | Add a T bot |
