@@ -46,36 +46,38 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions.
 | `!practice` | `!prac` | Toggle practice mode |
 | `!help` | `!phelp` | Show command list |
 | `!back` | `!rethrow` | Return to last throw position |
-| `!savenade <name>` | - | Save current position |
-| `!loadnade <#>` | - | Load saved position |
-| `!listnades` | - | List all saved positions |
-| `!deletenade <#>` | `!delnade` | Delete saved position |
-| `!thrownade <#>` | - | Load position and give grenade |
-| `!noclip` | - | Toggle fly mode |
-| `!god` | - | Toggle invincibility |
-| `!clear` | - | Clear grenades and smokes |
-| `!impacts` | - | Toggle bullet impacts |
-| `!go <x, y, z>` | `!goto` | Teleport to coordinates |
-| `!tspawn [#]` | - | Browse T spawn points |
-| `!ctspawn [#]` | - | Browse CT spawn points |
-| `!map <name>` | - | Change map |
-| `!noflash` | `!flash` | Toggle flash immunity |
-| `!restart` | `!reset` | Restart the round |
+| `!rec` | Record your nade lineup |
+| `!loadnade <#>` |Load saved position |
+| `!listnades` | List all saved positions |
+| `!deletenade <#>` | Delete saved position |
+| `!replay <#>` | Load and replay position and give grenade |
+| `!noclip` | Toggle fly mode |
+| `!god` | Toggle invincibility |
+| `!clear` | Clear grenades and smokes |
+| `!impacts` | Toggle bullet impacts |
+| `!go <x, y, z>` | Teleport to coordinates |
+| `!tspawn [#]` | Browse T spawn points |
+| `!ctspawn [#]` | Browse CT spawn points |
+| `!map <name>` | Change map |
+| `!noflash` | Toggle flash immunity |
+| `!restart` | Restart the round |
 | `!damage` | `!stats` | Show grenade damage stats |
-| `!clearstats` | - | Clear damage stats |
+| `!clearstats` | Clear damage stats |
 
 ### Bot Commands
 | Command | Aliases | Description |
 |---------|---------|-------------|
-| `!bot` | - | Add a bot (auto-balances teams) |
-| `!ctbot` | - | Add a CT bot |
-| `!tbot` | - | Add a T bot |
-| `!nobot` | `!removebot` | Remove bot you're aiming at |
-| `!kickbots` | `!nobots` | Remove all bots |
-| `!place` | `!placebot` | Place bot at your position |
-| `!boost` | `!duck`, `!crouch` | Make all bots crouch |
-| `!stand` | - | Make all bots stand |
-| `!jump` | - | Make closest bot jump |
+| `!bot` | Add a bot (auto-balances teams) |
+| `!ctbot` | Add a CT bot |
+| `!tbot` | Add a T bot |
+| `!nobot` | Remove bot you're aiming at |
+| `!kickbots` | Remove all bots |
+| `!place` | Place bot at your position |
+| `!cplace` | Place T bot at your position |
+| `!ctplace` | Place CT bot at your position |
+| `!boost` | Make all bots crouch |
+| `!stand` | Make all bots stand |
+| `!jump` | Make closest bot jump |
 
 ## 🔮 Tips:
 
