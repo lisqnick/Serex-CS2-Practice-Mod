@@ -116,7 +116,7 @@ all your favorite and most used commands to keys for faster use!
 ## 👁 Credits:
 **Author**: Serex
 
-**Version**: 1.1.0
+**Version**: 1.2.2
 
 *Compatible with latest CS2 updates*
 
