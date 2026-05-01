@@ -166,11 +166,38 @@ public class PracticeMode : BasePlugin
         RegisterEventHandler<EventDecoyStarted>(OnDecoyStarted);
         RegisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
         RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        RegisterListener<Listeners.OnClientPutInServer>(slot =>
+        {
+            AddTimer(1.0f, () =>
+            {
+                if (!_practiceMode) return;
+
+                var player = Utilities.GetPlayerFromSlot(slot);
+                ApplyNoDecalsToPlayer(player);
+            });
+        });
         
         _pluginPath = ModuleDirectory;
         
         Console.WriteLine($"[{ModuleName}] v{ModuleVersion} loaded!");
         Console.WriteLine($"[{ModuleName}] Save path: {_pluginPath}");
+    }
+
+    private void ApplyNoDecalsToPlayer(CCSPlayerController? player)
+    {
+        if (player == null || !player.IsValid || player.IsBot)
+            return;
+
+        try
+        {
+            player.ExecuteClientCommandFromServer("r_csgo_render_decals false");
+            player.ExecuteClientCommandFromServer("r_drawdecals false");
+            player.ExecuteClientCommandFromServer("cl_removedecals");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[PracticeMode] Failed to apply no decals to {player.PlayerName}: {ex.Message}");
+        }
     }
 
     public override void Unload(bool hotReload)
@@ -1578,6 +1605,7 @@ public class PracticeMode : BasePlugin
 		{
 			if (player.IsValid && player.PawnIsAlive)
 			{
+				ApplyNoDecalsToPlayer(player);
 				GiveAllGrenades(player);
 				GiveFullMoney(player);
 				
@@ -2160,6 +2188,11 @@ public class PracticeMode : BasePlugin
 		Server.ExecuteCommand("bot_quota 0");
 		Server.ExecuteCommand("bot_chatter off");
 		Server.ExecuteCommand("bot_allow_rogues 1");
+
+        foreach (var player in Utilities.GetPlayers())
+        {
+            ApplyNoDecalsToPlayer(player);
+        }
 		
 		Server.ExecuteCommand("mp_restartgame 1");
 		
