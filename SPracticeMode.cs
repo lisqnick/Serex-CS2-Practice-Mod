@@ -2107,7 +2107,7 @@ public class PracticeMode : BasePlugin
 		Server.ExecuteCommand("mp_buytime 99999");
 		Server.ExecuteCommand("mp_buy_anywhere 1");
 		Server.ExecuteCommand("mp_buy_during_immunity 0");
-		Server.ExecuteCommand("sv_infinite_ammo 2");
+		Server.ExecuteCommand("sv_infinite_ammo 1");
 		Server.ExecuteCommand("ammo_grenade_limit_total 6");
 		Server.ExecuteCommand("ammo_grenade_limit_flashbang 2");
 		Server.ExecuteCommand("ammo_grenade_limit_default 1");

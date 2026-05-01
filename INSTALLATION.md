@@ -244,7 +244,7 @@ exec practice.cfg
 - **Plugin won't load**: Ensure newest CSS is installed
 - **Commands not working**: Practice mod must be enabled first
 - **Bots won't spawn**: Check server bot settings aren't conflicting
-- **Grenades not refilling**: Ensure `sv_infinite_ammo 2` is set
+- **Grenades not refilling**: Ensure `sv_infinite_ammo 1` is set
 - **Ensure you have added `Game    csgo/addons/metamod` in gameinfo.gi**
 
 ### Getting Help:
