@@ -166,6 +166,8 @@ public class PracticeMode : BasePlugin
         RegisterEventHandler<EventDecoyStarted>(OnDecoyStarted);
         RegisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
         RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        AddCommandListener("say", OnSayCommand, HookMode.Pre);
+        AddCommandListener("say_team", OnSayCommand, HookMode.Pre);
         RegisterListener<Listeners.OnClientPutInServer>(slot =>
         {
             AddTimer(1.0f, () =>
@@ -206,6 +208,9 @@ public class PracticeMode : BasePlugin
 		
 		try
 		{
+			RemoveCommandListener("say", OnSayCommand, HookMode.Pre);
+			RemoveCommandListener("say_team", OnSayCommand, HookMode.Pre);
+
 			// Kill all timers
 			_tickTimer?.Kill();
 			_tickTimer = null;
@@ -263,6 +268,21 @@ public class PracticeMode : BasePlugin
 			Console.WriteLine($"[{ModuleName}] Error during unload: {ex.Message}");
 			Console.WriteLine($"[{ModuleName}] Stack trace: {ex.StackTrace}");
 		}
+	}
+
+	private HookResult OnSayCommand(CCSPlayerController? player, CommandInfo command)
+	{
+		if (player == null) return HookResult.Continue;
+
+		var message = command.ArgString.Trim();
+		if (message.Length >= 2 && message[0] == '"' && message[message.Length - 1] == '"')
+		{
+			message = message.Substring(1, message.Length - 2).Trim();
+		}
+
+		if (!message.Equals(".bot", StringComparison.OrdinalIgnoreCase)) return HookResult.Continue;
+		SpawnEnemyBotAtPlayerPosition(player);
+		return HookResult.Handled;
 	}
 
     [ConsoleCommand("css_practice", "Toggle practice mode")]
@@ -353,6 +373,7 @@ public class PracticeMode : BasePlugin
 		player.PrintToChat($" {ChatColors.Yellow}!clearstats{ChatColors.Default} - Clear damage stats");
         player.PrintToChat($" {ChatColors.Green}═══════ BOT COMMANDS ═══════");
         player.PrintToChat($" {ChatColors.Yellow}!bot{ChatColors.Default} - Add a bot");
+        player.PrintToChat($" {ChatColors.Yellow}.bot{ChatColors.Default} - Add enemy bot at your position");
         player.PrintToChat($" {ChatColors.Yellow}!ctbot{ChatColors.Default} / {ChatColors.Yellow}!tbot{ChatColors.Default} - Add CT/T bot");
         player.PrintToChat($" {ChatColors.Yellow}!nobot{ChatColors.Default} - Remove bot you're looking at");
         player.PrintToChat($" {ChatColors.Yellow}!kickbots{ChatColors.Default} - Remove all bots");
@@ -2899,6 +2920,152 @@ public class PracticeMode : BasePlugin
         if (weaponName.Contains("decoy")) return 9;
         return 3;
     }
+
+	private void SpawnEnemyBotAtPlayerPosition(CCSPlayerController player)
+	{
+		if (!_practiceMode) return;
+
+		if (player.Team == CsTeam.Terrorist)
+		{
+			SpawnAndPlaceTeamBotAtPlayerPosition(player, CsTeam.CounterTerrorist, "CT");
+		}
+		else if (player.Team == CsTeam.CounterTerrorist)
+		{
+			SpawnAndPlaceTeamBotAtPlayerPosition(player, CsTeam.Terrorist, "T");
+		}
+		else
+		{
+			player.PrintToChat($" {ChatColors.Red}[Practice]{ChatColors.Default} Join a team first!");
+		}
+	}
+
+	private void SpawnAndPlaceTeamBotAtPlayerPosition(CCSPlayerController player, CsTeam targetTeam, string teamName)
+	{
+		var playerPawn = player.PlayerPawn.Value;
+		if (playerPawn == null) return;
+
+		var playerPos = playerPawn.AbsOrigin;
+		if (playerPos == null) return;
+
+		var capturedPos = new Vector(playerPos.X, playerPos.Y, playerPos.Z);
+		var capturedAngle = new QAngle(0, playerPawn.EyeAngles.Y, 0);
+		var capturedIsEnemy = (player.Team == CsTeam.CounterTerrorist && targetTeam == CsTeam.Terrorist) ||
+							  (player.Team == CsTeam.Terrorist && targetTeam == CsTeam.CounterTerrorist);
+
+		var existingBotIds = Utilities.GetPlayers()
+			.Where(p => p.IsBot && p.IsValid && p.UserId.HasValue)
+			.Select(p => p.UserId!.Value)
+			.ToList();
+
+		player.PrintToChat($" {ChatColors.Green}[Practice]{ChatColors.Default} Spawning enemy {teamName} bot...");
+		Server.ExecuteCommand(targetTeam == CsTeam.CounterTerrorist ? "bot_add_ct" : "bot_add_t");
+
+		AddTimer(1.0f, () =>
+		{
+			Server.ExecuteCommand("bot_stop 1");
+			Server.ExecuteCommand("bot_freeze 1");
+			Server.ExecuteCommand("bot_dont_shoot 1");
+			Server.ExecuteCommand("bot_zombie 1");
+
+			var allBots = Utilities.GetPlayers()
+				.Where(p => p.IsBot && p.IsValid && p.UserId.HasValue)
+				.ToList();
+
+			var newBots = allBots.Where(b => !existingBotIds.Contains(b.UserId!.Value)).ToList();
+			var newTargetBot = newBots.FirstOrDefault(b => b.Team == targetTeam);
+			var botsToRemove = newBots.Where(b => b.UserId!.Value != newTargetBot?.UserId).ToList();
+
+			foreach (var bot in botsToRemove)
+			{
+				Server.ExecuteCommand($"kickid {bot.UserId!.Value}");
+			}
+
+			if (newTargetBot == null)
+			{
+				player.PrintToChat($" {ChatColors.Red}[Practice]{ChatColors.Default} Failed to spawn {teamName} bot! Try again.");
+				return;
+			}
+
+			if (!newTargetBot.PawnIsAlive)
+			{
+				newTargetBot.Respawn();
+			}
+
+			AddTimer(1.0f, () =>
+			{
+				PlaceSpawnedBotAtPosition(player, newTargetBot, capturedPos, capturedAngle, teamName, capturedIsEnemy);
+			});
+		});
+	}
+
+	private void PlaceSpawnedBotAtPosition(CCSPlayerController player, CCSPlayerController bot, Vector pos, QAngle angle, string teamName, bool isEnemy, bool retried = false)
+	{
+		if (!bot.IsValid || bot.PlayerPawn.Value == null)
+		{
+			if (player.IsValid)
+			{
+				player.PrintToChat($" {ChatColors.Red}[Practice]{ChatColors.Default} Failed to place {teamName} bot! Try again.");
+			}
+			return;
+		}
+
+		if (!bot.PawnIsAlive)
+		{
+			if (retried)
+			{
+				if (player.IsValid)
+				{
+					player.PrintToChat($" {ChatColors.Red}[Practice]{ChatColors.Default} Failed to place {teamName} bot! Try again.");
+				}
+				return;
+			}
+
+			bot.Respawn();
+			AddTimer(0.5f, () =>
+			{
+				PlaceSpawnedBotAtPosition(player, bot, pos, angle, teamName, isEnemy, true);
+			});
+			return;
+		}
+
+		var botPawn = bot.PlayerPawn.Value;
+		botPawn.Teleport(pos, angle, new Vector(0, 0, 0));
+
+		var botName = bot.PlayerName;
+		_botRespawnPosition[botName] = new Vector(pos.X, pos.Y, pos.Z);
+		_botRespawnAngle[botName] = new QAngle(0, angle.Y, 0);
+
+		if (isEnemy)
+		{
+			GiveTemporaryNoclip(player);
+		}
+
+		if (player.IsValid)
+		{
+			var relation = isEnemy ? "enemy" : "teammate";
+			var noclipMessage = isEnemy ? " (3s noclip)" : "";
+			player.PrintToChat($" {ChatColors.Green}[Practice]{ChatColors.Default} Placed {relation} {teamName} bot!{noclipMessage}");
+		}
+	}
+
+	private void GiveTemporaryNoclip(CCSPlayerController player)
+	{
+		if (!player.IsValid || !player.PawnIsAlive || player.PlayerPawn.Value == null) return;
+
+		var playerPawn = player.PlayerPawn.Value;
+		playerPawn.MoveType = MoveType_t.MOVETYPE_NOCLIP;
+		Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 8);
+
+		AddTimer(3.0f, () =>
+		{
+			if (player.IsValid && player.PawnIsAlive && player.PlayerPawn.Value != null)
+			{
+				var pawn = player.PlayerPawn.Value;
+				pawn.MoveType = MoveType_t.MOVETYPE_WALK;
+				Schema.SetSchemaValue(pawn.Handle, "CBaseEntity", "m_nActualMoveType", 2);
+			}
+		});
+	}
 	
 	private void PlaceSpecificTeamBot(CCSPlayerController player, CsTeam team)
 	{
